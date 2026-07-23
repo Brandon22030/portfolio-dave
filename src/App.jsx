@@ -7,14 +7,26 @@ const NAV_LINKS = ["À propos", "Services", "Projets", "Contact"];
 const SKILLS = ["Archicad", "Twinmotion", "Artlantis", "Enscape", "SketchUp", "AutoCAD", "BIM"];
 
 function TitleWithAccent({ text, accent }) {
-  const parts = text?.split("|") || [text];
-  if (parts.length < 2) return <>{text}</>;
-  return (
-    <>
-      {parts[0]}
-      <span style={{ color: accent }} dangerouslySetInnerHTML={{ __html: parts[1] }} />
-    </>
-  );
+  const parts = (text || "").split(/(<span>[\s\S]*?<\/span>)/gi);
+
+  return parts.map((part, index) => {
+    const spanMatch = part.match(/^<span>([\s\S]*?)<\/span>$/i);
+    if (spanMatch) {
+      return (
+        <span key={index} style={{ color: accent }}>
+          {spanMatch[1]}
+        </span>
+      );
+    }
+
+    const [beforeAccent, accentText] = part.split("|");
+    return (
+      <span key={index}>
+        {beforeAccent}
+        {accentText && <span style={{ color: accent }}>{accentText}</span>}
+      </span>
+    );
+  });
 }
 
 export default function App() {
