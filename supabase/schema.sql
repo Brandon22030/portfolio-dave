@@ -7,6 +7,17 @@ CREATE TABLE IF NOT EXISTS projects (
   type text NOT NULL,
   year text NOT NULL,
   color text NOT NULL,
+  description text DEFAULT '',
+  order_index int DEFAULT 0,
+  created_at timestamptz DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS project_images (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  project_id uuid NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
+  storage_path text NOT NULL UNIQUE,
+  image_url text NOT NULL,
+  alt_text text DEFAULT '',
   order_index int DEFAULT 0,
   created_at timestamptz DEFAULT now()
 );
@@ -31,6 +42,7 @@ CREATE TABLE IF NOT EXISTS settings (
 
 -- Active la réplication temps réel (pour rafraîchir le site automatiquement)
 ALTER TABLE projects REPLICA IDENTITY FULL;
+ALTER TABLE project_images REPLICA IDENTITY FULL;
 ALTER TABLE services REPLICA IDENTITY FULL;
 ALTER TABLE settings REPLICA IDENTITY FULL;
 
@@ -67,6 +79,7 @@ INSERT INTO settings (key, value) VALUES
 
 -- Politiques RLS : lecture publique, écriture réservée aux utilisateurs authentifiés.
 ALTER TABLE projects ENABLE ROW LEVEL SECURITY;
+ALTER TABLE project_images ENABLE ROW LEVEL SECURITY;
 ALTER TABLE services ENABLE ROW LEVEL SECURITY;
 ALTER TABLE settings ENABLE ROW LEVEL SECURITY;
 
@@ -74,6 +87,17 @@ CREATE POLICY "Allow public read on projects" ON projects FOR SELECT USING (true
 CREATE POLICY "Allow authenticated insert on projects" ON projects FOR INSERT WITH CHECK (auth.uid() IS NOT NULL);
 CREATE POLICY "Allow authenticated update on projects" ON projects FOR UPDATE USING (auth.uid() IS NOT NULL);
 CREATE POLICY "Allow authenticated delete on projects" ON projects FOR DELETE USING (auth.uid() IS NOT NULL);
+
+CREATE POLICY "Allow public read on project images" ON project_images FOR SELECT USING (true);
+CREATE POLICY "Allow authenticated insert on project images" ON project_images FOR INSERT WITH CHECK (auth.uid() IS NOT NULL);
+CREATE POLICY "Allow authenticated update on project images" ON project_images FOR UPDATE USING (auth.uid() IS NOT NULL) WITH CHECK (auth.uid() IS NOT NULL);
+CREATE POLICY "Allow authenticated delete on project images" ON project_images FOR DELETE USING (auth.uid() IS NOT NULL);
+
+INSERT INTO storage.buckets (id, name, public) VALUES ('project-images', 'project-images', true);
+CREATE POLICY "Public read project images" ON storage.objects FOR SELECT USING (bucket_id = 'project-images');
+CREATE POLICY "Authenticated upload project images" ON storage.objects FOR INSERT WITH CHECK (bucket_id = 'project-images' AND auth.uid() IS NOT NULL);
+CREATE POLICY "Authenticated update project images" ON storage.objects FOR UPDATE USING (bucket_id = 'project-images' AND auth.uid() IS NOT NULL) WITH CHECK (bucket_id = 'project-images' AND auth.uid() IS NOT NULL);
+CREATE POLICY "Authenticated delete project images" ON storage.objects FOR DELETE USING (bucket_id = 'project-images' AND auth.uid() IS NOT NULL);
 
 CREATE POLICY "Allow public read on services" ON services FOR SELECT USING (true);
 CREATE POLICY "Allow authenticated insert on services" ON services FOR INSERT WITH CHECK (auth.uid() IS NOT NULL);

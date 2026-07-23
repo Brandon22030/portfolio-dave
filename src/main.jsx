@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import App from './App.jsx'
 import Dashboard from './Dashboard.jsx'
+import ProjectDetail from './ProjectDetail.jsx'
 import Auth from './Auth.jsx'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
@@ -10,6 +11,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<App />} />
+        <Route path="/projets/:id" element={<ProjectDetail />} />
         <Route path="/dashboard" element={<Auth><Dashboard /></Auth>} />
       </Routes>
     </BrowserRouter>

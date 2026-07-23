@@ -332,8 +332,9 @@ export default function App() {
         <h2 style={{ fontSize: "2rem", fontWeight: 700, textAlign: "center", marginBottom: "3rem" }}>{settings.projects_title}</h2>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(260px,1fr))", gap: "1.5rem" }}>
           {projects.map((p, i) => (
-            <div
+            <Link
               key={p.id || i}
+              to={p.id ? `/projets/${p.id}` : "/#projets"}
               style={{
                 borderRadius: 4,
                 overflow: "hidden",
@@ -341,6 +342,8 @@ export default function App() {
                 background: c.card,
                 cursor: "pointer",
                 transition: "transform .2s",
+                textDecoration: "none",
+                display: "block",
               }}
               onMouseEnter={(e) => (e.currentTarget.style.transform = "translateY(-4px)")}
               onMouseLeave={(e) => (e.currentTarget.style.transform = "translateY(0)")}
@@ -381,7 +384,7 @@ export default function App() {
                 <p style={{ fontSize: 10, letterSpacing: 3, color: c.tc, marginBottom: 6 }}>{p.type.toUpperCase()}</p>
                 <h3 style={{ fontWeight: 600, fontSize: 15, color: c.cardText }}>{p.title}</h3>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       </section>

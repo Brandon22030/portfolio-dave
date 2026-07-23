@@ -99,13 +99,19 @@ export default function Dashboard() {
   const [tab, setTab] = useState("projects");
   const [message, setMessage] = useState("");
 
-  const [projectForm, setProjectForm] = useState({ title: "", type: "", year: "", color: "#1A1A1A", order_index: 0 });
+  const [projectForm, setProjectForm] = useState({ title: "", type: "", year: "", color: "#1A1A1A", description: "", order_index: 0 });
   const [editingProject, setEditingProject] = useState(null);
+  const [projectModalOpen, setProjectModalOpen] = useState(false);
+  const [pendingImageFiles, setPendingImageFiles] = useState([]);
 
   const [serviceForm, setServiceForm] = useState({ icon: "", title: "", description: "", order_index: 0 });
   const [editingService, setEditingService] = useState(null);
 
   const [contentForm, setContentForm] = useState({});
+  const [galleryProject, setGalleryProject] = useState(null);
+  const [galleryImages, setGalleryImages] = useState([]);
+  const [galleryError, setGalleryError] = useState("");
+  const [uploadingImage, setUploadingImage] = useState(false);
 
   useEffect(() => {
     if (Object.keys(settings).length) setContentForm({ ...settings });
@@ -117,8 +123,13 @@ export default function Dashboard() {
   };
 
   const resetProjectForm = () => {
-    setProjectForm({ title: "", type: "", year: "", color: "#1A1A1A", order_index: projects.length + 1 });
+    setProjectForm({ title: "", type: "", year: "", color: "#1A1A1A", description: "", order_index: projects.length + 1 });
     setEditingProject(null);
+    setGalleryProject(null);
+    setGalleryImages([]);
+    setPendingImageFiles([]);
+    setGalleryError("");
+    setProjectModalOpen(false);
   };
 
   const resetServiceForm = () => {
@@ -136,13 +147,11 @@ export default function Dashboard() {
   const handleProjectSubmit = async (e) => {
     e.preventDefault();
     try {
-      if (editingProject) {
-        await updateProject(editingProject.id, projectForm);
-        showMessage("Projet mis à jour.");
-      } else {
-        await addProject(projectForm);
-        showMessage("Projet ajouté.");
-      }
+      const savedProject = editingProject
+        ? await updateProject(editingProject.id, projectForm)
+        : await addProject(projectForm);
+      await uploadProjectImages(savedProject, pendingImageFiles);
+      showMessage(editingProject ? "Projet mis à jour." : "Projet ajouté.");
       resetProjectForm();
     } catch (err) {
       showMessage("Erreur : " + err.message);
@@ -177,6 +186,77 @@ export default function Dashboard() {
     }
   };
 
+  const loadGallery = async (project) => {
+    setGalleryProject(project);
+    setGalleryImages([]);
+    setGalleryError("");
+    setTimeout(() => document.getElementById("project-gallery")?.scrollIntoView({ behavior: "smooth", block: "start" }), 0);
+
+    const { data, error: galleryRequestError } = await supabase
+      .from("project_images")
+      .select("*")
+      .eq("project_id", project.id)
+      .order("order_index", { ascending: true });
+
+    if (galleryRequestError) {
+      setGalleryError("La galerie n’est pas encore configurée dans Supabase. Exécute le fichier supabase/migrate_project_gallery.sql dans SQL Editor, puis réessaie.");
+      return;
+    }
+    setGalleryImages(data || []);
+  };
+
+  const selectProjectImages = (event) => {
+    const files = Array.from(event.target.files || []);
+    const invalidFile = files.find((file) => !file.type.startsWith("image/") || file.size > 10 * 1024 * 1024);
+    if (invalidFile) {
+      showMessage("Utilise des images de moins de 10 Mo.");
+      event.target.value = "";
+      return;
+    }
+    setPendingImageFiles((current) => [...current, ...files]);
+    event.target.value = "";
+  };
+
+  const uploadProjectImages = async (project, files) => {
+    if (!files.length) return;
+
+    setUploadingImage(true);
+    try {
+      for (const [index, file] of files.entries()) {
+        const extension = file.name.split(".").pop() || "jpg";
+        const path = `${project.id}/${crypto.randomUUID()}.${extension}`;
+        const { error: uploadError } = await supabase.storage.from("project-images").upload(path, file, { contentType: file.type });
+        if (uploadError) throw uploadError;
+
+        const { data: publicUrl } = supabase.storage.from("project-images").getPublicUrl(path);
+        const { error: imageError } = await supabase.from("project_images").insert({
+          project_id: project.id,
+          storage_path: path,
+          image_url: publicUrl.publicUrl,
+          alt_text: project.title,
+          order_index: galleryImages.length + index,
+        });
+        if (imageError) throw imageError;
+      }
+      if (galleryProject?.id === project.id) await loadGallery(project);
+    } finally {
+      setUploadingImage(false);
+    }
+  };
+
+  const deleteGalleryImage = async (image) => {
+    try {
+      const { error: storageError } = await supabase.storage.from("project-images").remove([image.storage_path]);
+      if (storageError) throw storageError;
+      const { error: databaseError } = await supabase.from("project_images").delete().eq("id", image.id);
+      if (databaseError) throw databaseError;
+      setGalleryImages((images) => images.filter((item) => item.id !== image.id));
+      showMessage("Image supprimée.");
+    } catch (err) {
+      showMessage("Erreur de suppression : " + err.message);
+    }
+  };
+
   const startEditProject = (p) => {
     setEditingProject(p);
     setProjectForm({
@@ -184,8 +264,14 @@ export default function Dashboard() {
       type: p.type,
       year: p.year,
       color: p.color,
+      description: p.description || "",
       order_index: p.order_index,
     });
+    setGalleryProject(p);
+    setPendingImageFiles([]);
+    setGalleryError("");
+    setProjectModalOpen(true);
+    loadGallery(p);
     setTab("projects");
   };
 
@@ -296,35 +382,19 @@ export default function Dashboard() {
         {/* PROJETS */}
         {tab === "projects" && !loading && (
           <div>
-            <h2 style={{ fontSize: 18, marginBottom: "1rem" }}>
-              {editingProject ? "Modifier un projet" : "Ajouter un projet"}
-            </h2>
-            <form onSubmit={handleProjectSubmit} style={{ display: "grid", gap: "1rem", margin: "0 auto 2rem", maxWidth: 720 }}>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "1rem", alignItems: "stretch" }}>
-                <Input label="Titre" value={projectForm.title} onChange={(v) => setProjectForm({ ...projectForm, title: v })} />
-                <Input label="Type" value={projectForm.type} onChange={(v) => setProjectForm({ ...projectForm, type: v })} />
-                <Input label="Année" value={projectForm.year} onChange={(v) => setProjectForm({ ...projectForm, year: v })} />
-                <Input label="Couleur" value={projectForm.color} onChange={(v) => setProjectForm({ ...projectForm, color: v })} />
-                <Input
-                  label="Ordre"
-                  type="number"
-                  value={projectForm.order_index}
-                  onChange={(v) => setProjectForm({ ...projectForm, order_index: Number(v) })}
-                />
-              </div>
-              <div style={{ display: "flex", gap: "1rem" }}>
-                <button type="submit" style={buttonStyle}>
-                  {editingProject ? "Mettre à jour" : "Ajouter"}
-                </button>
-                {editingProject && (
-                  <button type="button" onClick={resetProjectForm} style={ghostButtonStyle}>
-                    Annuler
-                  </button>
-                )}
-              </div>
-            </form>
-
-            <h3 style={{ fontSize: 16, marginBottom: "1rem", color: c.muted }}>Projets existants</h3>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "1rem", flexWrap: "wrap", marginBottom: "1.5rem" }}>
+              <h2 style={{ fontSize: 18, margin: 0 }}>Projets existants</h2>
+              <button
+                type="button"
+                onClick={() => {
+                  resetProjectForm();
+                  setProjectModalOpen(true);
+                }}
+                style={buttonStyle}
+              >
+                Ajouter un projet
+              </button>
+            </div>
             <div style={{ display: "grid", gap: "1rem" }}>
               {projects.map((p) => (
                 <div
@@ -347,7 +417,7 @@ export default function Dashboard() {
                       {p.type} · {p.year} · {p.color} · ordre {p.order_index}
                     </p>
                   </div>
-                  <div style={{ display: "flex", gap: "0.5rem" }}>
+                  <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
                     <button onClick={() => startEditProject(p)} style={ghostButtonStyle}>
                       Modifier
                     </button>
@@ -358,6 +428,48 @@ export default function Dashboard() {
                 </div>
               ))}
             </div>
+
+            {projectModalOpen && (
+              <div style={{ position: "fixed", inset: 0, zIndex: 200, background: "rgba(0,0,0,.72)", padding: "1rem", overflowY: "auto" }}>
+                <form onSubmit={handleProjectSubmit} style={{ maxWidth: 760, margin: "3rem auto", padding: "1.5rem", background: c.card, border: `1px solid ${c.border3}`, borderRadius: 8, display: "grid", gap: "1rem" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "1rem" }}>
+                    <h2 style={{ margin: 0, fontSize: 20 }}>{editingProject ? "Modifier le projet" : "Ajouter un projet"}</h2>
+                    <button type="button" onClick={resetProjectForm} style={ghostButtonStyle}>Fermer</button>
+                  </div>
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "1rem" }}>
+                    <Input label="Titre" value={projectForm.title} onChange={(v) => setProjectForm({ ...projectForm, title: v })} />
+                    <Input label="Type" value={projectForm.type} onChange={(v) => setProjectForm({ ...projectForm, type: v })} />
+                    <Input label="Année" value={projectForm.year} onChange={(v) => setProjectForm({ ...projectForm, year: v })} />
+                    <Input label="Couleur" value={projectForm.color} onChange={(v) => setProjectForm({ ...projectForm, color: v })} />
+                    <Input label="Ordre" type="number" value={projectForm.order_index} onChange={(v) => setProjectForm({ ...projectForm, order_index: Number(v) })} />
+                  </div>
+                  <Input label="Description du projet" type="textarea" value={projectForm.description} onChange={(v) => setProjectForm({ ...projectForm, description: v })} />
+                  {galleryError && <p style={{ margin: 0, color: "#f08a7f", lineHeight: 1.6 }}>{galleryError}</p>}
+                  <div>
+                    <p style={{ color: c.muted, fontSize: 13, margin: "0 0 0.5rem" }}>Images du projet · JPG, PNG ou WebP · 10 Mo maximum.</p>
+                    <label style={{ ...buttonStyle, display: "inline-block", marginBottom: "0.75rem" }}>
+                      Ajouter des images
+                      <input type="file" accept="image/*" multiple onChange={selectProjectImages} style={{ display: "none" }} />
+                    </label>
+                    {pendingImageFiles.length > 0 && <p style={{ color: c.muted, fontSize: 13, margin: "0 0 0.75rem" }}>{pendingImageFiles.length} image(s) prête(s) à être ajoutée(s) lors de l’enregistrement.</p>}
+                    {galleryImages.length > 0 && (
+                      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))", gap: "0.75rem" }}>
+                        {galleryImages.map((image) => (
+                          <div key={image.id} style={{ position: "relative", aspectRatio: "4 / 3", overflow: "hidden", borderRadius: 4 }}>
+                            <img src={image.image_url} alt={image.alt_text || projectForm.title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                            <button type="button" onClick={() => deleteGalleryImage(image)} style={{ ...dangerButtonStyle, position: "absolute", bottom: 6, right: 6, padding: "5px 8px", fontSize: 11 }}>Supprimer</button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                  <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
+                    <button type="submit" disabled={uploadingImage} style={{ ...buttonStyle, opacity: uploadingImage ? 0.7 : 1 }}>{uploadingImage ? "Enregistrement…" : editingProject ? "Mettre à jour" : "Créer le projet"}</button>
+                    <button type="button" onClick={resetProjectForm} style={ghostButtonStyle}>Annuler</button>
+                  </div>
+                </form>
+              </div>
+            )}
           </div>
         )}
 
