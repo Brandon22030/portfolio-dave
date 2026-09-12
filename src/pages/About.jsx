@@ -105,8 +105,18 @@ function AboutMobile({ skills, softwares }) {
         <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
           <div style={{ fontSize: 11, letterSpacing: ".2em", textTransform: "uppercase", color: COLORS.terracottaLight }}>Logiciels</div>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 1, background: "rgba(239,233,223,.15)", border: "1px solid rgba(239,233,223,.15)" }}>
-            {softwares.map((s) => (
-              <div key={s.n} style={{ background: COLORS.ink, padding: "18px 16px", display: "flex", flexDirection: "column", gap: 14 }}>
+            {softwares.map((s, i) => (
+              <div
+                key={s.n}
+                style={{
+                  background: COLORS.ink,
+                  padding: "18px 16px",
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 14,
+                  gridColumn: i === softwares.length - 1 && softwares.length % 2 !== 0 ? "1 / -1" : "auto",
+                }}
+              >
                 <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                   <div style={{ width: 32, height: 32, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
                     <SoftwareLogo software={s} size={28} />
@@ -214,8 +224,18 @@ function AboutTablet({ skills, softwares }) {
         <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
           <div style={{ fontSize: 11, letterSpacing: ".2em", textTransform: "uppercase", color: COLORS.terracottaLight }}>Logiciels</div>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 1, background: "rgba(239,233,223,.15)", border: "1px solid rgba(239,233,223,.15)" }}>
-            {softwares.map((s) => (
-              <div key={s.n} style={{ background: COLORS.ink, padding: "16px 14px", display: "flex", flexDirection: "column", gap: 12 }}>
+            {softwares.map((s, i) => (
+              <div
+                key={s.n}
+                style={{
+                  background: COLORS.ink,
+                  padding: "16px 14px",
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 12,
+                  gridColumn: i === softwares.length - 1 && softwares.length % 2 !== 0 ? "1 / -1" : "auto",
+                }}
+              >
                 <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                   <div style={{ width: 28, height: 28, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
                     <SoftwareLogo software={s} size={26} />
@@ -330,8 +350,20 @@ export default function About() {
         <div style={{ display: "flex", flexDirection: "column", gap: 32 }}>
           <div style={{ fontSize: 12, letterSpacing: ".2em", textTransform: "uppercase", color: COLORS.terracottaLight }}>Logiciels</div>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 1, background: "rgba(239,233,223,.15)", border: "1px solid rgba(239,233,223,.15)" }}>
-            {softwares.map((s) => (
-              <div key={s.n} style={{ background: COLORS.ink, padding: "28px 24px", display: "flex", flexDirection: "column", justifyContent: "space-between", gap: 24, minHeight: 132 }}>
+            {softwares.map((s, i) => (
+              <div
+                key={s.n}
+                style={{
+                  background: COLORS.ink,
+                  padding: "28px 24px",
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "space-between",
+                  gap: 24,
+                  minHeight: 132,
+                  gridColumn: i === softwares.length - 1 && softwares.length % 2 !== 0 ? "1 / -1" : "auto",
+                }}
+              >
                 <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
                   <div style={{ width: 40, height: 40, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
                     <SoftwareLogo software={s} />
