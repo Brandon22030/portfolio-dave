@@ -57,18 +57,18 @@ INSERT INTO projects (title, type, year, color, order_index) VALUES
 
 INSERT INTO services (icon, title, description, order_index) VALUES
 ('📐', 'Plans 2D', 'Reproduction et conception de plans d''architecture conformes aux normes : façades, coupes, plans de masse.', 1),
-('🏗️', 'Modélisation 3D', 'Maquettes numériques BIM sur Archicad — villas, hôtels, halls d''événements.', 2),
+('🏗️', 'Modélisation 3D', 'Maquettes numériques BIM sur Archicad - villas, hôtels, halls d''événements.', 2),
 ('✨', 'Rendu photoréaliste', 'Visualisations haute qualité avec Twinmotion et Artlantis pour présenter votre projet comme bâti.', 3),
 ('📋', 'Suivi de chantier', 'Rapports techniques, documentation de chantier et contrôle de conformité des ouvrages.', 4);
 
 INSERT INTO settings (key, value) VALUES
 ('hero_subtitle', 'ARCHITECTE · TECHNICIEN BIM · COTONOU, BÉNIN'),
 ('hero_title', 'Des espaces pensés.|<span>Des projets réalisés.</span>'),
-('hero_description', 'Du plan 2D au rendu photoréaliste — je transforme vos idées en projets architecturaux clairs, beaux et construits.'),
+('hero_description', 'Du plan 2D au rendu photoréaliste - je transforme vos idées en projets architecturaux clairs, beaux et construits.'),
 ('about_label', 'À PROPOS'),
 ('about_title', 'L''architecte qui <span>décode</span> les maisons'),
 ('about_text1', 'Basé à Cotonou, je suis Dessinateur Projeteur Bâtiment et Technicien en Génie Civil, passionné par l''architecture africaine contemporaine.'),
-('about_text2', 'Mon objectif : rendre l''architecture accessible, lisible et concrète — des villas résidentielles aux complexes hôteliers, chaque projet raconte une histoire.'),
+('about_text2', 'Mon objectif : rendre l''architecture accessible, lisible et concrète - des villas résidentielles aux complexes hôteliers, chaque projet raconte une histoire.'),
 ('services_label', 'SERVICES'),
 ('services_title', 'Ce que je propose'),
 ('projects_label', 'RÉALISATIONS'),

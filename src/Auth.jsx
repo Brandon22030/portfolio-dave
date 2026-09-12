@@ -1,15 +1,14 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { supabase } from "./supabaseClient";
-import { THEMES } from "./theme";
-
-const c = THEMES.dark;
+import { COLORS, FONTS } from "./theme";
+import { useIsMobile } from "./hooks/useIsMobile";
 
 const inputStyle = {
-  background: c.card,
-  border: `1px solid ${c.border4}`,
-  color: c.text,
+  background: COLORS.adminCard,
+  border: `1px solid ${COLORS.adminBorder}`,
+  color: COLORS.ink,
   padding: "14px 16px",
-  borderRadius: 4,
   fontSize: 14,
   outline: "none",
   width: "100%",
@@ -18,17 +17,52 @@ const inputStyle = {
 };
 
 const buttonStyle = {
-  background: c.tc,
-  color: c.cardText,
+  background: COLORS.terracotta,
+  color: COLORS.sand,
   border: "none",
   padding: "14px",
-  borderRadius: 4,
   fontSize: 14,
   fontWeight: 600,
   cursor: "pointer",
 };
 
+function MobileBlocked() {
+  return (
+    <div
+      style={{
+        fontFamily: "'Sora', sans-serif",
+        background: COLORS.ink,
+        color: COLORS.sand,
+        minHeight: "100vh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: "2rem",
+        textAlign: "center",
+      }}
+    >
+      <div style={{ display: "flex", flexDirection: "column", gap: 20, maxWidth: 340 }}>
+        <div style={{ fontFamily: FONTS.display, fontWeight: 700, fontSize: 20, letterSpacing: "-.02em" }}>
+          Smart'<span style={{ fontWeight: 500, color: COLORS.terracottaLight }}>Archi</span>
+        </div>
+        <h1 style={{ margin: 0, fontSize: 24, fontWeight: 500 }}>Tableau de bord indisponible sur mobile</h1>
+        <p style={{ margin: 0, fontSize: 14, lineHeight: 1.6, color: COLORS.text4 }}>
+          L'administration de Smart'Archi est conçue pour un écran d'ordinateur. Connecte-toi depuis un ordinateur pour y
+          accéder.
+        </p>
+        <Link
+          to="/"
+          style={{ marginTop: 12, border: "1px solid rgba(239,233,223,.4)", padding: "14px 20px", fontSize: 13, letterSpacing: ".06em" }}
+        >
+          ← Retour au site
+        </Link>
+      </div>
+    </div>
+  );
+}
+
 export default function Auth({ children }) {
+  const isMobile = useIsMobile();
   const [session, setSession] = useState(null);
   const [loading, setLoading] = useState(true);
   const [email, setEmail] = useState("");
@@ -56,14 +90,18 @@ export default function Auth({ children }) {
     if (error) {
       setMessage(
         error.message === "Invalid login credentials"
-          ? "L’adresse email ou le mot de passe est incorrect."
+          ? "L'adresse email ou le mot de passe est incorrect."
           : "La connexion a échoué. Vérifie tes informations puis réessaie."
       );
     }
   };
 
+  if (isMobile) {
+    return <MobileBlocked />;
+  }
+
   if (loading) {
-    return <div style={{ textAlign: "center", padding: "4rem", color: c.muted }}>Chargement…</div>;
+    return <div style={{ textAlign: "center", padding: "4rem", color: COLORS.text3 }}>Chargement…</div>;
   }
 
   if (session) {
@@ -73,9 +111,9 @@ export default function Auth({ children }) {
   return (
     <div
       style={{
-        fontFamily: "'Segoe UI',sans-serif",
-        background: c.bg,
-        color: c.text,
+        fontFamily: "'Sora', sans-serif",
+        background: COLORS.adminBg,
+        color: COLORS.ink,
         minHeight: "100vh",
         display: "flex",
         alignItems: "center",
@@ -85,29 +123,27 @@ export default function Auth({ children }) {
     >
       <div
         style={{
-          background: c.card,
-          border: `1px solid ${c.border3}`,
-          borderRadius: 8,
+          background: COLORS.adminCard,
+          border: `1px solid ${COLORS.adminBorder}`,
           padding: "2.5rem",
           width: "100%",
           maxWidth: 380,
         }}
       >
-        <h1 style={{ margin: "0 0 0.5rem", fontSize: 22, color: c.tc }}>PlanifyBJ Dashboard</h1>
-        <p style={{ color: c.muted, marginBottom: "2rem", fontSize: 14 }}>
+        <h1 style={{ margin: "0 0 0.5rem", fontSize: 22, color: COLORS.terracotta }}>Smart'Archi Admin</h1>
+        <p style={{ color: COLORS.text3, marginBottom: "2rem", fontSize: 14 }}>
           Accès réservé. Connecte-toi avec le compte créé dans Supabase.
         </p>
 
         {message && (
           <div
             style={{
-              background: `${c.bg}`,
-              border: `1px solid ${c.tc60}`,
-              borderRadius: 4,
+              background: COLORS.adminHighlight,
+              border: `1px solid ${COLORS.terracotta}`,
               padding: "0.75rem",
               marginBottom: "1rem",
               fontSize: 13,
-              color: c.text,
+              color: COLORS.ink,
             }}
           >
             {message}
@@ -116,11 +152,11 @@ export default function Auth({ children }) {
 
         <form onSubmit={handleSignIn} style={{ display: "grid", gap: "1rem" }}>
           <label style={{ display: "flex", flexDirection: "column", gap: 6, fontSize: 13, width: "100%" }}>
-            <span style={{ color: c.muted }}>Email</span>
+            <span style={{ color: COLORS.text3 }}>Email</span>
             <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} style={inputStyle} required />
           </label>
           <label style={{ display: "flex", flexDirection: "column", gap: 6, fontSize: 13, width: "100%" }}>
-            <span style={{ color: c.muted }}>Mot de passe</span>
+            <span style={{ color: COLORS.text3 }}>Mot de passe</span>
             <div style={{ position: "relative", width: "100%" }}>
               <input
                 type={showPassword ? "text" : "password"}
@@ -140,7 +176,7 @@ export default function Auth({ children }) {
                   transform: "translateY(-50%)",
                   background: "none",
                   border: "none",
-                  color: c.tc,
+                  color: COLORS.terracotta,
                   cursor: "pointer",
                   fontSize: 12,
                   fontWeight: 600,
