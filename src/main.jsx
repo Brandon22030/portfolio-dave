@@ -20,6 +20,7 @@ import NotFound from "./pages/NotFound";
 import Auth from "./Auth";
 import AdminDashboard from "./admin/AdminDashboard";
 import AdminProjects from "./admin/AdminProjects";
+import AdminCareer from "./admin/AdminCareer";
 import AdminSoftwares from "./admin/AdminSoftwares";
 import AdminMedia from "./admin/AdminMedia";
 import AdminArticles from "./admin/AdminArticles";
@@ -45,6 +46,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
 
         <Route path="/dashboard" element={<Auth><AdminDashboard /></Auth>} />
         <Route path="/dashboard/projets" element={<Auth><AdminProjects /></Auth>} />
+        <Route path="/dashboard/parcours" element={<Auth><AdminCareer /></Auth>} />
         <Route path="/dashboard/logiciels" element={<Auth><AdminSoftwares /></Auth>} />
         <Route path="/dashboard/medias" element={<Auth><AdminMedia /></Auth>} />
         <Route path="/dashboard/articles" element={<Auth><AdminArticles /></Auth>} />
