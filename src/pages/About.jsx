@@ -289,7 +289,7 @@ export default function About() {
           <div style={{ height: 720, background: COLORS.taupe, overflow: "hidden" }}>
             <img src="/img/portrait-bennett.jpg" alt="Bennett David Medehou" style={{ width: "100%", height: "100%", objectFit: "cover", filter: "grayscale(20%)" }} />
           </div>
-          <div style={{ position: "absolute", right: -32, bottom: 48, background: COLORS.terracotta, color: COLORS.sand, padding: "24px 28px", display: "flex", flexDirection: "column", gap: 4 }}>
+          <div style={{ position: "absolute", right: -32, bottom: 30, background: COLORS.terracotta, color: COLORS.sand, padding: "24px 28px", display: "flex", flexDirection: "column", gap: 4 }}>
             <div style={{ fontFamily: FONTS.display, fontSize: 22, fontWeight: 500 }}>Bennett D. Medehou</div>
             <div style={{ fontSize: 12, letterSpacing: ".14em", textTransform: "uppercase" }}>Dessinateur projeteur · Génie civil</div>
           </div>

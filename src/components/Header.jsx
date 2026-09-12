@@ -269,9 +269,6 @@ export default function Header({ variant = "light" }) {
         <Link
           to="/"
           style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 10,
             fontFamily: FONTS.display,
             fontWeight: 700,
             fontSize: 17,

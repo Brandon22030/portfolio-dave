@@ -168,7 +168,7 @@ export default function Footer({ topPadding = "80px 64px 40px", mobileTopPadding
     <footer style={{ background: COLORS.ink, color: COLORS.text5, padding: topPadding, display: "flex", flexDirection: "column", gap: 64, fontSize: 13 }}>
       <div style={{ display: "grid", gridTemplateColumns: "1.4fr 1fr 1fr 1fr", gap: 40 }}>
         <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-          <Link to="/" style={{ display: "flex", alignItems: "center", gap: 12, fontFamily: FONTS.display, fontWeight: 700, fontSize: 26, letterSpacing: "-.02em", color: COLORS.sand }}>
+          <Link to="/" style={{ fontFamily: FONTS.display, fontWeight: 700, fontSize: 26, letterSpacing: "-.02em", color: COLORS.sand }}>
             Smart'<span style={{ fontWeight: 500, color: COLORS.terracottaLight }}>Archi</span>
           </Link>
           <div style={{ fontSize: 14, lineHeight: 1.65, maxWidth: 320 }}>
