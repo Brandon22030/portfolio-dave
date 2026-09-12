@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback } from "react";
 import { supabase } from "../supabaseClient";
 
 export function useTable(table, defaultRows = [], orderBy = "order_index", ascending = true) {
-  const [rows, setRows] = useState(defaultRows);
+  const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -15,9 +15,10 @@ export function useTable(table, defaultRows = [], orderBy = "order_index", ascen
         : supabase.from(table).select("*");
       const { data, error: fetchError } = await query;
       if (fetchError) throw fetchError;
-      if (data?.length) setRows(data);
+      setRows(data?.length ? data : defaultRows);
     } catch (e) {
       setError(e.message);
+      setRows((prev) => (prev.length ? prev : defaultRows));
     } finally {
       setLoading(false);
     }
