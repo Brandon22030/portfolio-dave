@@ -87,3 +87,12 @@ export const inputStyle = {
 export function Card({ children, style }) {
   return <div style={{ background: COLORS.adminCard, border: `1px solid ${COLORS.adminBorder}`, padding: 24, ...style }}>{children}</div>;
 }
+
+// Real submissions from the public contact form never set `received` (only the
+// seed/example rows do) - fall back to the actual `created_at` timestamp so
+// real messages don't show a blank date.
+export function contactDate(c) {
+  if (c.received) return c.received;
+  if (!c.created_at) return "-";
+  return new Date(c.created_at).toLocaleDateString("fr-FR", { day: "numeric", month: "short" });
+}

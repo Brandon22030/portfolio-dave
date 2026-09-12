@@ -1,6 +1,6 @@
 import { useState } from "react";
 import AdminLayout from "./AdminLayout";
-import { PageHeader, StatusPill, DarkButton, PrimaryButton, OutlineButton, inputStyle, Card } from "./adminUI";
+import { PageHeader, StatusPill, DarkButton, PrimaryButton, OutlineButton, inputStyle, Card, contactDate } from "./adminUI";
 import { COLORS } from "../theme";
 import { useContacts, useProjects } from "../hooks/resources";
 
@@ -100,7 +100,7 @@ export default function AdminContacts() {
             >
               <div style={{ fontWeight: 500 }}>{c.name}</div>
               <div style={{ color: COLORS.text1 }}>{c.project_type}</div>
-              <div style={{ color: COLORS.text3 }}>{c.received}</div>
+              <div style={{ color: COLORS.text3 }}>{contactDate(c)}</div>
               <StatusPill status={c.status} />
             </div>
           ))}
@@ -111,7 +111,7 @@ export default function AdminContacts() {
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 16 }}>
               <div>
                 <div style={{ fontSize: 18, fontWeight: 500 }}>{selected.name}</div>
-                <div style={{ fontSize: 12, color: COLORS.text3, marginTop: 4 }}>Reçu le {selected.received} · via formulaire</div>
+                <div style={{ fontSize: 12, color: COLORS.text3, marginTop: 4 }}>Reçu le {contactDate(selected)} · via formulaire</div>
               </div>
               <StatusPill status={selected.status} />
             </div>
