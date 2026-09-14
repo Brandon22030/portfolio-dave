@@ -76,6 +76,20 @@ a[href]:hover {
   filter: brightness(0.8);
 }
 
+/* Cards where the whole block (image + meta + title + excerpt) is a single
+   <a> - underlining every line of text on hover looks broken, so only the
+   title gets the underline. Setting text-decoration:none on a descendant
+   does NOT stop an ancestor's underline from painting through it in real
+   browsers, so this has to be done as separate, more specific rules rather
+   than an inline override on the excerpt/meta text. */
+a.link-card:hover {
+  text-decoration: none;
+}
+
+a.link-card:hover .link-card-title {
+  text-decoration: underline;
+}
+
 button:not(:disabled):hover {
   filter: brightness(0.88);
   transform: translateY(-1px);

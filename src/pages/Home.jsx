@@ -117,7 +117,7 @@ function HomeMobile({ projects }) {
 
       <div style={{ padding: "32px 20px 0", display: "flex", flexDirection: "column", gap: 28 }}>
         {featured.map((p, i) => (
-          <Reveal key={p.id || p.slug} as={Link} delay={i * 0.08} to={`/projets/${p.slug}`} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+          <Reveal key={p.id || p.slug} as={Link} className="link-card" delay={i * 0.08} to={`/projets/${p.slug}`} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
             <div style={{ position: "relative", aspectRatio: "4/3", background: COLORS.taupe, overflow: "hidden" }}>
               <img src={p.cover_image_url} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
               <div style={{ position: "absolute", top: 12, left: 12, background: COLORS.sand, color: COLORS.ink, fontSize: 10, letterSpacing: ".14em", textTransform: "uppercase", padding: "7px 10px" }}>
@@ -125,7 +125,7 @@ function HomeMobile({ projects }) {
               </div>
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
-              <div style={{ fontSize: 19, fontWeight: 500, letterSpacing: "-.01em" }}>{p.title}</div>
+              <div className="link-card-title" style={{ fontSize: 19, fontWeight: 500, letterSpacing: "-.01em" }}>{p.title}</div>
               <div style={{ fontSize: 12, color: COLORS.text2 }}>
                 {p.client_type} · {p.year}
               </div>
@@ -311,6 +311,7 @@ function HomeTablet({ projects }) {
           <Reveal
             key={p.id || p.slug}
             as={Link}
+            className="link-card"
             delay={i * 0.08}
             to={`/projets/${p.slug}`}
             style={{ display: "flex", flexDirection: "column", gap: 12, gridColumn: i === 0 ? "1 / -1" : "auto" }}
@@ -322,7 +323,7 @@ function HomeTablet({ projects }) {
               </div>
             </div>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 12 }}>
-              <div style={{ fontSize: 19, fontWeight: 500, letterSpacing: "-.01em" }}>{p.title}</div>
+              <div className="link-card-title" style={{ fontSize: 19, fontWeight: 500, letterSpacing: "-.01em" }}>{p.title}</div>
               <div style={{ fontSize: 12, color: COLORS.text2, flexShrink: 0 }}>{p.year}</div>
             </div>
           </Reveal>
@@ -541,6 +542,7 @@ export default function Home() {
           <Reveal
             key={p.id || p.slug}
             as={Link}
+            className="link-card"
             delay={i * 0.1}
             to={`/projets/${p.slug}`}
             style={{ display: "flex", flexDirection: "column", gap: 16, gridRow: i === 0 ? "span 2" : "auto" }}
@@ -564,7 +566,7 @@ export default function Home() {
               </div>
             </div>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
-              <div style={{ fontSize: 22, fontWeight: 500, letterSpacing: "-.01em" }}>{p.title}</div>
+              <div className="link-card-title" style={{ fontSize: 22, fontWeight: 500, letterSpacing: "-.01em" }}>{p.title}</div>
               <div style={{ fontSize: 13, color: COLORS.text2 }}>
                 {p.client_type} · {p.year}
               </div>

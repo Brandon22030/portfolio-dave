@@ -28,7 +28,7 @@ function JournalMobile({ featured, rest, lead, bold }) {
       </div>
 
       {featured && (
-        <Link to={`/journal/${featured.slug}`} style={{ margin: "40px 20px 0", display: "flex", flexDirection: "column", background: COLORS.ink, color: COLORS.sand }}>
+        <Link to={`/journal/${featured.slug}`} className="link-card" style={{ margin: "40px 20px 0", display: "flex", flexDirection: "column", background: COLORS.ink, color: COLORS.sand }}>
           <div style={{ aspectRatio: "4/3", background: COLORS.taupe, overflow: "hidden" }}>
             <img src={featured.cover_image_url} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
           </div>
@@ -37,7 +37,7 @@ function JournalMobile({ featured, rest, lead, bold }) {
               <div style={{ color: COLORS.terracottaLight }}>À la une · {featured.category}</div>
               <div style={{ color: COLORS.text3 }}>{featured.date}</div>
             </div>
-            <h2 style={{ margin: 0, fontSize: 26, fontWeight: 300, lineHeight: 1.15, letterSpacing: "-.025em" }}>
+            <h2 className="link-card-title" style={{ margin: 0, fontSize: 26, fontWeight: 300, lineHeight: 1.15, letterSpacing: "-.025em" }}>
               {lead}
               <span style={{ fontWeight: 600 }}>{bold}</span>
             </h2>
@@ -51,7 +51,7 @@ function JournalMobile({ featured, rest, lead, bold }) {
 
       <div style={{ padding: "48px 20px 72px", display: "flex", flexDirection: "column", gap: 40 }}>
         {rest.map((a, i) => (
-          <Reveal key={a.slug} as={Link} delay={(i % 3) * 0.08} to={`/journal/${a.slug}`} style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+          <Reveal key={a.slug} as={Link} className="link-card" delay={(i % 3) * 0.08} to={`/journal/${a.slug}`} style={{ display: "flex", flexDirection: "column", gap: 14 }}>
             <div style={{ aspectRatio: "4/3", overflow: "hidden" }}>
               <img src={a.cover_image_url} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
             </div>
@@ -59,7 +59,7 @@ function JournalMobile({ featured, rest, lead, bold }) {
               <span style={{ color: COLORS.terracotta }}>{a.category}</span>
               <span style={{ color: COLORS.text2 }}>{a.date}</span>
             </div>
-            <div style={{ fontSize: 21, fontWeight: 500, lineHeight: 1.25, letterSpacing: "-.015em" }}>{a.title}</div>
+            <div className="link-card-title" style={{ fontSize: 21, fontWeight: 500, lineHeight: 1.25, letterSpacing: "-.015em" }}>{a.title}</div>
             <div style={{ fontSize: 14, lineHeight: 1.65, color: COLORS.text1 }}>{a.excerpt}</div>
           </Reveal>
         ))}
@@ -86,7 +86,7 @@ function JournalTablet({ featured, rest, lead, bold }) {
       </div>
 
       {featured && (
-        <Link to={`/journal/${featured.slug}`} style={{ margin: "56px 40px 0", display: "flex", flexDirection: "column", background: COLORS.ink, color: COLORS.sand }}>
+        <Link to={`/journal/${featured.slug}`} className="link-card" style={{ margin: "56px 40px 0", display: "flex", flexDirection: "column", background: COLORS.ink, color: COLORS.sand }}>
           <div style={{ height: 340, overflow: "hidden" }}>
             <img src={featured.cover_image_url} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
           </div>
@@ -96,7 +96,7 @@ function JournalTablet({ featured, rest, lead, bold }) {
                 <span style={{ color: COLORS.terracottaLight }}>À la une · {featured.category}</span>
                 <span style={{ color: COLORS.text3, textTransform: "none", letterSpacing: 0 }}>{featured.date}</span>
               </div>
-              <h2 style={{ margin: 0, fontSize: 32, fontWeight: 300, lineHeight: 1.12, letterSpacing: "-.025em" }}>
+              <h2 className="link-card-title" style={{ margin: 0, fontSize: 32, fontWeight: 300, lineHeight: 1.12, letterSpacing: "-.025em" }}>
                 {lead}
                 <span style={{ fontWeight: 600 }}>{bold}</span>
               </h2>
@@ -111,7 +111,7 @@ function JournalTablet({ featured, rest, lead, bold }) {
 
       <div style={{ padding: "56px 40px 96px", display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 24 }}>
         {rest.map((a, i) => (
-          <Reveal key={a.slug} as={Link} delay={(i % 3) * 0.1} to={`/journal/${a.slug}`} style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+          <Reveal key={a.slug} as={Link} className="link-card" delay={(i % 3) * 0.1} to={`/journal/${a.slug}`} style={{ display: "flex", flexDirection: "column", gap: 14 }}>
             <div style={{ aspectRatio: "4/3", overflow: "hidden" }}>
               <img src={a.cover_image_url} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
             </div>
@@ -119,7 +119,7 @@ function JournalTablet({ featured, rest, lead, bold }) {
               <span style={{ color: COLORS.terracotta }}>{a.category}</span>
               <span style={{ color: COLORS.text2, textTransform: "none", letterSpacing: 0 }}>{a.date}</span>
             </div>
-            <div style={{ fontSize: 19, fontWeight: 500, lineHeight: 1.25, letterSpacing: "-.015em" }}>{a.title}</div>
+            <div className="link-card-title" style={{ fontSize: 19, fontWeight: 500, lineHeight: 1.25, letterSpacing: "-.015em" }}>{a.title}</div>
             <div style={{ fontSize: 13, lineHeight: 1.65, color: COLORS.text1 }}>{a.excerpt}</div>
           </Reveal>
         ))}
@@ -160,6 +160,7 @@ export default function Journal() {
       {featured && (
         <Link
           to={`/journal/${featured.slug}`}
+          className="link-card"
           style={{ margin: "64px 64px 0", display: "grid", gridTemplateColumns: "1.3fr 1fr", background: COLORS.ink, color: COLORS.sand }}
         >
           <div style={{ height: 560, overflow: "hidden" }}>
@@ -170,7 +171,7 @@ export default function Journal() {
               <span style={{ color: COLORS.terracottaLight }}>À la une · {featured.category}</span>
               <span style={{ color: COLORS.text3, textTransform: "none", letterSpacing: 0 }}>{featured.date}</span>
             </div>
-            <h2 style={{ margin: 0, fontSize: 40, fontWeight: 300, lineHeight: 1.12, letterSpacing: "-.025em" }}>
+            <h2 className="link-card-title" style={{ margin: 0, fontSize: 40, fontWeight: 300, lineHeight: 1.12, letterSpacing: "-.025em" }}>
               {lead}
               <span style={{ fontWeight: 600 }}>{bold}</span>
             </h2>
@@ -182,7 +183,7 @@ export default function Journal() {
 
       <div style={{ padding: "64px 64px 128px", display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 32 }}>
         {rest.map((a, i) => (
-          <Reveal key={a.slug} as={Link} delay={(i % 3) * 0.1} to={`/journal/${a.slug}`} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+          <Reveal key={a.slug} as={Link} className="link-card" delay={(i % 3) * 0.1} to={`/journal/${a.slug}`} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
             <div style={{ aspectRatio: "4/3", overflow: "hidden" }}>
               <img src={a.cover_image_url} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
             </div>
@@ -190,7 +191,7 @@ export default function Journal() {
               <span style={{ color: COLORS.terracotta }}>{a.category}</span>
               <span style={{ color: COLORS.text2, textTransform: "none", letterSpacing: 0 }}>{a.date}</span>
             </div>
-            <div style={{ fontSize: 24, fontWeight: 500, lineHeight: 1.25, letterSpacing: "-.015em" }}>{a.title}</div>
+            <div className="link-card-title" style={{ fontSize: 24, fontWeight: 500, lineHeight: 1.25, letterSpacing: "-.015em" }}>{a.title}</div>
             <div style={{ fontSize: 14, lineHeight: 1.65, color: COLORS.text1 }}>{a.excerpt}</div>
           </Reveal>
         ))}

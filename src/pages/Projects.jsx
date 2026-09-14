@@ -50,7 +50,7 @@ function ProjectsMobile({ projects, filtered, filter, setFilter }) {
 
       <div style={{ padding: "32px 20px 72px", display: "flex", flexDirection: "column", gap: 36 }}>
         {filtered.map((p, i) => (
-          <Reveal key={p.id || p.slug} as={Link} delay={(i % 3) * 0.08} to={`/projets/${p.slug}`} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+          <Reveal key={p.id || p.slug} as={Link} className="link-card" delay={(i % 3) * 0.08} to={`/projets/${p.slug}`} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
             <div style={{ position: "relative", aspectRatio: "4/3", background: COLORS.taupe, overflow: "hidden" }}>
               <img src={p.cover_image_url} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
               <div style={{ position: "absolute", top: 12, left: 12, background: COLORS.sand, fontSize: 10, letterSpacing: ".14em", textTransform: "uppercase", padding: "7px 10px" }}>
@@ -61,7 +61,7 @@ function ProjectsMobile({ projects, filtered, filter, setFilter }) {
               </div>
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
-              <div style={{ fontSize: 19, fontWeight: 500, letterSpacing: "-.01em" }}>{p.title}</div>
+              <div className="link-card-title" style={{ fontSize: 19, fontWeight: 500, letterSpacing: "-.01em" }}>{p.title}</div>
               <div style={{ fontSize: 12, color: COLORS.text2 }}>
                 {p.client_type} · {p.surface}
               </div>
@@ -118,7 +118,7 @@ function ProjectsTablet({ projects, filtered, filter, setFilter }) {
 
       <div style={{ padding: "40px 40px 96px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: "40px 28px" }}>
         {filtered.map((p, i) => (
-          <Reveal key={p.id || p.slug} as={Link} delay={(i % 4) * 0.08} to={`/projets/${p.slug}`} style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+          <Reveal key={p.id || p.slug} as={Link} className="link-card" delay={(i % 4) * 0.08} to={`/projets/${p.slug}`} style={{ display: "flex", flexDirection: "column", gap: 14 }}>
             <div style={{ position: "relative", aspectRatio: "4/3", background: COLORS.taupe, overflow: "hidden" }}>
               <img src={p.cover_image_url} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
               <div style={{ position: "absolute", top: 14, left: 14, background: COLORS.sand, fontSize: 10, letterSpacing: ".14em", textTransform: "uppercase", padding: "7px 10px" }}>
@@ -129,7 +129,7 @@ function ProjectsTablet({ projects, filtered, filter, setFilter }) {
               </div>
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
-              <div style={{ fontSize: 19, fontWeight: 500, letterSpacing: "-.01em" }}>{p.title}</div>
+              <div className="link-card-title" style={{ fontSize: 19, fontWeight: 500, letterSpacing: "-.01em" }}>{p.title}</div>
               <div style={{ fontSize: 12, color: COLORS.text2 }}>
                 {p.client_type} · {p.surface}
               </div>
@@ -195,7 +195,7 @@ export default function Projects() {
 
       <div style={{ padding: "48px 64px 128px", display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: "48px 32px" }}>
         {filtered.map((p, i) => (
-          <Reveal key={p.id || p.slug} as={Link} delay={(i % 3) * 0.1} to={`/projets/${p.slug}`} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+          <Reveal key={p.id || p.slug} as={Link} className="link-card" delay={(i % 3) * 0.1} to={`/projets/${p.slug}`} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
             <div style={{ position: "relative", aspectRatio: "4/3", background: COLORS.taupe, overflow: "hidden" }}>
               <img src={p.cover_image_url} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
               <div style={{ position: "absolute", top: 14, left: 14, background: COLORS.sand, fontSize: 11, letterSpacing: ".14em", textTransform: "uppercase", padding: "7px 11px" }}>
@@ -206,7 +206,7 @@ export default function Projects() {
               </div>
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-              <div style={{ fontSize: 19, fontWeight: 500, letterSpacing: "-.01em" }}>{p.title}</div>
+              <div className="link-card-title" style={{ fontSize: 19, fontWeight: 500, letterSpacing: "-.01em" }}>{p.title}</div>
               <div style={{ fontSize: 13, color: COLORS.text2 }}>
                 {p.client_type} · {p.surface}
               </div>
