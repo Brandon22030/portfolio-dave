@@ -49,7 +49,7 @@ function AboutMobile({ skills, softwares }) {
 
       <div style={{ padding: "32px 20px 0", position: "relative" }}>
         <div style={{ aspectRatio: "4/5", background: COLORS.taupe, overflow: "hidden" }}>
-          <img src="/img/portrait-bennett.jpg" alt="Bennett David Medehou" style={{ width: "100%", height: "100%", objectFit: "cover", filter: "grayscale(20%)" }} />
+          <img src="/img/LINKEDIN.png" alt="Bennett David Medehou" style={{ width: "100%", height: "100%", objectFit: "cover", filter: "grayscale(20%)" }} />
         </div>
         <div style={{ position: "absolute", left: 20, bottom: 24, background: COLORS.terracotta, color: COLORS.sand, padding: "16px 20px", display: "flex", flexDirection: "column", gap: 3 }}>
           <div style={{ fontFamily: FONTS.display, fontSize: 16, fontWeight: 500 }}>Bennett D. Medehou</div>
@@ -167,7 +167,7 @@ function AboutTablet({ skills, softwares }) {
       <div style={{ padding: "48px 40px 0", display: "grid", gridTemplateColumns: "340px 1fr", gap: 40, alignItems: "start" }}>
         <div style={{ position: "relative" }}>
           <div style={{ aspectRatio: "3/4", background: COLORS.taupe, overflow: "hidden" }}>
-            <img src="/img/portrait-bennett.jpg" alt="Bennett David Medehou" style={{ width: "100%", height: "100%", objectFit: "cover", filter: "grayscale(20%)" }} />
+            <img src="/img/LINKEDIN.png" alt="Bennett David Medehou" style={{ width: "100%", height: "100%", objectFit: "cover", filter: "grayscale(20%)" }} />
           </div>
           <div style={{ position: "absolute", right: -20, bottom: 32, background: COLORS.terracotta, color: COLORS.sand, padding: "18px 20px", display: "flex", flexDirection: "column", gap: 3 }}>
             <div style={{ fontFamily: FONTS.display, fontSize: 16, fontWeight: 500 }}>Bennett D. Medehou</div>
@@ -287,7 +287,7 @@ export default function About() {
       <div style={{ padding: "64px 64px 0", display: "grid", gridTemplateColumns: "560px 1fr", gap: 96 }}>
         <div style={{ position: "relative" }}>
           <div style={{ height: 720, background: COLORS.taupe, overflow: "hidden" }}>
-            <img src="/img/portrait-bennett.jpg" alt="Bennett David Medehou" style={{ width: "100%", height: "100%", objectFit: "cover", filter: "grayscale(20%)" }} />
+            <img src="/img/LINKEDIN.png" alt="Bennett David Medehou" style={{ width: "100%", height: "100%", objectFit: "cover", filter: "grayscale(20%)" }} />
           </div>
           <div style={{ position: "absolute", right: -32, bottom: 30, background: COLORS.terracotta, color: COLORS.sand, padding: "24px 28px", display: "flex", flexDirection: "column", gap: 4 }}>
             <div style={{ fontFamily: FONTS.display, fontSize: 22, fontWeight: 500 }}>Bennett D. Medehou</div>
