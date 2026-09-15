@@ -88,6 +88,48 @@ export function Card({ children, style }) {
   return <div style={{ background: COLORS.adminCard, border: `1px solid ${COLORS.adminBorder}`, padding: 24, ...style }}>{children}</div>;
 }
 
+export function Modal({ title, onClose, children, width = 640 }) {
+  return (
+    <div
+      onClick={onClose}
+      style={{
+        position: "fixed",
+        inset: 0,
+        zIndex: 300,
+        background: "rgba(20,18,15,.6)",
+        display: "flex",
+        justifyContent: "center",
+        padding: "48px 24px",
+        overflowY: "auto",
+      }}
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        style={{
+          background: COLORS.adminCard,
+          border: `1px solid ${COLORS.adminBorder}`,
+          width: "100%",
+          maxWidth: width,
+          height: "fit-content",
+          padding: 32,
+        }}
+      >
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
+          <div style={{ fontWeight: 500, fontSize: 18 }}>{title}</div>
+          <button
+            onClick={onClose}
+            aria-label="Fermer"
+            style={{ background: "none", border: "none", cursor: "pointer", color: COLORS.text3, fontSize: 22, lineHeight: 1, padding: 4 }}
+          >
+            ×
+          </button>
+        </div>
+        {children}
+      </div>
+    </div>
+  );
+}
+
 // Real submissions from the public contact form never set `received` (only the
 // seed/example rows do) - fall back to the actual `created_at` timestamp so
 // real messages don't show a blank date.

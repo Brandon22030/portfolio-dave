@@ -15,18 +15,25 @@ function splitTitle(title) {
   return { first, rest: rest.join(" ") };
 }
 
-function BlueprintPanel({ height, caption, code, accent }) {
+function BlueprintPanel({ height, caption, code, accent, imageUrl }) {
   return (
-    <div style={{ position: "relative", height, background: COLORS.taupe, backgroundImage: "linear-gradient(#cfc8bc 1px,transparent 1px),linear-gradient(90deg,#cfc8bc 1px,transparent 1px)", backgroundSize: "40px 40px", backgroundColor: COLORS.sand }}>
-      <svg width="100%" height="100%" viewBox="0 0 800 520" preserveAspectRatio="xMidYMid meet">
-        <rect x="60" y="60" width="680" height="400" fill="none" stroke={COLORS.ink} strokeWidth="3" />
-        <path d="M300 60 A60 60 0 0 1 360 120" fill="none" stroke={COLORS.ink} strokeWidth="2" />
-        <circle cx="620" cy="300" r="60" fill="none" stroke={COLORS.ink} strokeWidth="2" />
-        <rect x="360" y="300" width="140" height="60" fill={accent ? COLORS.terracotta : "none"} stroke={COLORS.ink} strokeWidth="2" />
-      </svg>
-      <div style={{ position: "absolute", left: 16, bottom: 12, fontSize: 12, color: COLORS.text2 }}>{caption}</div>
+    <div style={{ position: "relative", height, background: COLORS.taupe, backgroundImage: "linear-gradient(#cfc8bc 1px,transparent 1px),linear-gradient(90deg,#cfc8bc 1px,transparent 1px)", backgroundSize: "40px 40px", backgroundColor: COLORS.sand, overflow: "hidden" }}>
+      {imageUrl ? (
+        <>
+          <img src={imageUrl} alt={caption} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "contain" }} />
+          <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg,transparent 70%,rgba(20,18,15,.55) 100%)" }} />
+        </>
+      ) : (
+        <svg width="100%" height="100%" viewBox="0 0 800 520" preserveAspectRatio="xMidYMid meet">
+          <rect x="60" y="60" width="680" height="400" fill="none" stroke={COLORS.ink} strokeWidth="3" />
+          <path d="M300 60 A60 60 0 0 1 360 120" fill="none" stroke={COLORS.ink} strokeWidth="2" />
+          <circle cx="620" cy="300" r="60" fill="none" stroke={COLORS.ink} strokeWidth="2" />
+          <rect x="360" y="300" width="140" height="60" fill={accent ? COLORS.terracotta : "none"} stroke={COLORS.ink} strokeWidth="2" />
+        </svg>
+      )}
+      <div style={{ position: "absolute", left: 16, bottom: 12, fontSize: 12, color: imageUrl ? COLORS.sand : COLORS.text2 }}>{caption}</div>
       {code && (
-        <div style={{ position: "absolute", right: 16, bottom: 12, fontFamily: FONTS.display, fontSize: 11, color: COLORS.terracotta }}>{code}</div>
+        <div style={{ position: "absolute", right: 16, bottom: 12, fontFamily: FONTS.display, fontSize: 11, color: imageUrl ? COLORS.terracottaLight : COLORS.terracotta }}>{code}</div>
       )}
     </div>
   );
@@ -168,7 +175,7 @@ function ProjectDetailMobile({ project, index, projects, gallery, prev, next }) 
         </div>
 
         <div style={{ aspectRatio: "4/3" }}>
-          <BlueprintPanel height="100%" caption={`${tab} - 1:100`} code="A-101" />
+          <BlueprintPanel height="100%" caption={`${tab} - 1:100`} code="A-101" imageUrl={project.plans?.[tab]} />
         </div>
 
         <div style={{ display: "flex", flexDirection: "column", gap: 12, borderTop: "1px solid rgba(239,233,223,.15)", paddingTop: 28 }}>
@@ -347,7 +354,7 @@ function ProjectDetailTablet({ project, index, gallery, prev, next }) {
         </div>
 
         <div style={{ aspectRatio: "3/2" }}>
-          <BlueprintPanel height="100%" caption={`${tab} - 1:100`} code="A-101" />
+          <BlueprintPanel height="100%" caption={`${tab} - 1:100`} code="A-101" imageUrl={project.plans?.[tab]} />
         </div>
 
         <div style={{ display: "flex", flexDirection: "column", gap: 24, borderTop: "1px solid rgba(239,233,223,.15)", paddingTop: 28 }}>
@@ -589,10 +596,10 @@ export default function ProjectDetail() {
         </div>
 
         <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: 24 }}>
-          <BlueprintPanel height={640} caption={`${tab} - 1:100`} code="A-101" />
+          <BlueprintPanel height={640} caption={`${tab} - 1:100`} code="A-101" imageUrl={project.plans?.[tab]} />
           <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
-            <BlueprintPanel height={308} caption="Coupe transversale" />
-            <BlueprintPanel height={308} caption="Coupe AA" accent />
+            <BlueprintPanel height={308} caption="Coupe transversale" imageUrl={project.plans?.["Coupe transversale"]} />
+            <BlueprintPanel height={308} caption="Coupe longitudinale" accent imageUrl={project.plans?.["Coupe longitudinale"]} />
           </div>
         </div>
 
