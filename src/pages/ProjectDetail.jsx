@@ -15,6 +15,10 @@ function splitTitle(title) {
   return { first, rest: rest.join(" ") };
 }
 
+function hasPlans(project) {
+  return DRAWING_TABS.some((t) => !!project.plans?.[t]);
+}
+
 function BlueprintPanel({ height, caption, code, accent, imageUrl }) {
   return (
     <div style={{ position: "relative", height, background: COLORS.taupe, backgroundImage: "linear-gradient(#cfc8bc 1px,transparent 1px),linear-gradient(90deg,#cfc8bc 1px,transparent 1px)", backgroundSize: "40px 40px", backgroundColor: COLORS.sand, overflow: "hidden" }}>
@@ -145,38 +149,42 @@ function ProjectDetailMobile({ project, index, projects, gallery, prev, next }) 
       )}
 
       <div style={{ margin: "72px 0 0", background: COLORS.ink, color: COLORS.sand, padding: "64px 20px", display: "flex", flexDirection: "column", gap: 28 }}>
-        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-          <div style={{ fontSize: 11, letterSpacing: ".2em", textTransform: "uppercase", color: COLORS.terracottaLight }}>Documents techniques</div>
-          <h2 style={{ margin: 0, fontSize: 32, fontWeight: 300, letterSpacing: "-.03em" }}>
-            Plans techniques <span style={{ fontWeight: 600 }}>& coupes</span>
-          </h2>
-        </div>
-        <div style={{ display: "flex", gap: 8, overflowX: "auto", whiteSpace: "nowrap", fontSize: 12 }}>
-          {DRAWING_TABS.map((t, i) => {
-            const active = tab === t;
-            return (
-              <button
-                key={t}
-                onClick={() => setTab(t)}
-                style={{
-                  fontFamily: "inherit",
-                  cursor: "pointer",
-                  flexShrink: 0,
-                  background: active ? COLORS.sand : "transparent",
-                  color: active ? COLORS.ink : COLORS.sand,
-                  border: active ? "none" : "1px solid rgba(239,233,223,.3)",
-                  padding: active ? "9px 14px" : "8px 14px",
-                }}
-              >
-                {DRAWING_TABS_SHORT[i]}
-              </button>
-            );
-          })}
-        </div>
+        {hasPlans(project) && (
+          <>
+            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+              <div style={{ fontSize: 11, letterSpacing: ".2em", textTransform: "uppercase", color: COLORS.terracottaLight }}>Documents techniques</div>
+              <h2 style={{ margin: 0, fontSize: 32, fontWeight: 300, letterSpacing: "-.03em" }}>
+                Plans techniques <span style={{ fontWeight: 600 }}>& coupes</span>
+              </h2>
+            </div>
+            <div style={{ display: "flex", gap: 8, overflowX: "auto", whiteSpace: "nowrap", fontSize: 12 }}>
+              {DRAWING_TABS.map((t, i) => {
+                const active = tab === t;
+                return (
+                  <button
+                    key={t}
+                    onClick={() => setTab(t)}
+                    style={{
+                      fontFamily: "inherit",
+                      cursor: "pointer",
+                      flexShrink: 0,
+                      background: active ? COLORS.sand : "transparent",
+                      color: active ? COLORS.ink : COLORS.sand,
+                      border: active ? "none" : "1px solid rgba(239,233,223,.3)",
+                      padding: active ? "9px 14px" : "8px 14px",
+                    }}
+                  >
+                    {DRAWING_TABS_SHORT[i]}
+                  </button>
+                );
+              })}
+            </div>
 
-        <div style={{ aspectRatio: "4/3" }}>
-          <BlueprintPanel height="100%" caption={`${tab} - 1:100`} code="A-101" imageUrl={project.plans?.[tab]} />
-        </div>
+            <div style={{ aspectRatio: "4/3" }}>
+              <BlueprintPanel height="100%" caption={`${tab} - 1:100`} code="A-101" imageUrl={project.plans?.[tab]} />
+            </div>
+          </>
+        )}
 
         <div style={{ display: "flex", flexDirection: "column", gap: 12, borderTop: "1px solid rgba(239,233,223,.15)", paddingTop: 28 }}>
           <div style={{ fontSize: 11, letterSpacing: ".2em", textTransform: "uppercase", color: COLORS.terracottaLight }}>Logiciels utilisés</div>
@@ -322,40 +330,44 @@ function ProjectDetailTablet({ project, index, gallery, prev, next }) {
       )}
 
       <div style={{ margin: "96px 0 0", background: COLORS.ink, color: COLORS.sand, padding: "72px 40px", display: "flex", flexDirection: "column", gap: 32 }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 20 }}>
-          <div>
-            <div style={{ fontSize: 11, letterSpacing: ".2em", textTransform: "uppercase", color: COLORS.terracottaLight, marginBottom: 10 }}>Documents techniques</div>
-            <h2 style={{ margin: 0, fontSize: 36, fontWeight: 300 }}>
-              Plans techniques <span style={{ fontWeight: 600 }}>& coupes</span>
-            </h2>
-          </div>
-        </div>
-        <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-          {DRAWING_TABS.map((t) => {
-            const active = tab === t;
-            return (
-              <button
-                key={t}
-                onClick={() => setTab(t)}
-                style={{
-                  fontFamily: "inherit",
-                  fontSize: 12,
-                  cursor: "pointer",
-                  background: active ? COLORS.sand : "transparent",
-                  color: active ? COLORS.ink : COLORS.sand,
-                  border: active ? "none" : "1px solid rgba(239,233,223,.3)",
-                  padding: active ? "9px 16px" : "8px 16px",
-                }}
-              >
-                {t}
-              </button>
-            );
-          })}
-        </div>
+        {hasPlans(project) && (
+          <>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 20 }}>
+              <div>
+                <div style={{ fontSize: 11, letterSpacing: ".2em", textTransform: "uppercase", color: COLORS.terracottaLight, marginBottom: 10 }}>Documents techniques</div>
+                <h2 style={{ margin: 0, fontSize: 36, fontWeight: 300 }}>
+                  Plans techniques <span style={{ fontWeight: 600 }}>& coupes</span>
+                </h2>
+              </div>
+            </div>
+            <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+              {DRAWING_TABS.map((t) => {
+                const active = tab === t;
+                return (
+                  <button
+                    key={t}
+                    onClick={() => setTab(t)}
+                    style={{
+                      fontFamily: "inherit",
+                      fontSize: 12,
+                      cursor: "pointer",
+                      background: active ? COLORS.sand : "transparent",
+                      color: active ? COLORS.ink : COLORS.sand,
+                      border: active ? "none" : "1px solid rgba(239,233,223,.3)",
+                      padding: active ? "9px 16px" : "8px 16px",
+                    }}
+                  >
+                    {t}
+                  </button>
+                );
+              })}
+            </div>
 
-        <div style={{ aspectRatio: "3/2" }}>
-          <BlueprintPanel height="100%" caption={`${tab} - 1:100`} code="A-101" imageUrl={project.plans?.[tab]} />
-        </div>
+            <div style={{ aspectRatio: "3/2" }}>
+              <BlueprintPanel height="100%" caption={`${tab} - 1:100`} code="A-101" imageUrl={project.plans?.[tab]} />
+            </div>
+          </>
+        )}
 
         <div style={{ display: "flex", flexDirection: "column", gap: 24, borderTop: "1px solid rgba(239,233,223,.15)", paddingTop: 28 }}>
           <div>
@@ -564,44 +576,48 @@ export default function ProjectDetail() {
       )}
 
       <div style={{ margin: "128px 0 0", background: COLORS.ink, color: COLORS.sand, padding: "96px 64px", display: "flex", flexDirection: "column", gap: 40 }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 24 }}>
-          <div>
-            <div style={{ fontSize: 12, letterSpacing: ".2em", textTransform: "uppercase", color: COLORS.terracottaLight, marginBottom: 12 }}>Documents techniques</div>
-            <h2 style={{ margin: 0, fontSize: 48, fontWeight: 300 }}>
-              Plans techniques <span style={{ fontWeight: 600 }}>& coupes</span>
-            </h2>
-          </div>
-          <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-            {DRAWING_TABS.map((t) => {
-              const active = tab === t;
-              return (
-                <button
-                  key={t}
-                  onClick={() => setTab(t)}
-                  style={{
-                    fontFamily: "inherit",
-                    fontSize: 13,
-                    cursor: "pointer",
-                    background: active ? COLORS.sand : "transparent",
-                    color: active ? COLORS.ink : COLORS.sand,
-                    border: active ? "none" : "1px solid rgba(239,233,223,.3)",
-                    padding: active ? "10px 18px" : "9px 18px",
-                  }}
-                >
-                  {t}
-                </button>
-              );
-            })}
-          </div>
-        </div>
+        {hasPlans(project) && (
+          <>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 24 }}>
+              <div>
+                <div style={{ fontSize: 12, letterSpacing: ".2em", textTransform: "uppercase", color: COLORS.terracottaLight, marginBottom: 12 }}>Documents techniques</div>
+                <h2 style={{ margin: 0, fontSize: 48, fontWeight: 300 }}>
+                  Plans techniques <span style={{ fontWeight: 600 }}>& coupes</span>
+                </h2>
+              </div>
+              <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                {DRAWING_TABS.map((t) => {
+                  const active = tab === t;
+                  return (
+                    <button
+                      key={t}
+                      onClick={() => setTab(t)}
+                      style={{
+                        fontFamily: "inherit",
+                        fontSize: 13,
+                        cursor: "pointer",
+                        background: active ? COLORS.sand : "transparent",
+                        color: active ? COLORS.ink : COLORS.sand,
+                        border: active ? "none" : "1px solid rgba(239,233,223,.3)",
+                        padding: active ? "10px 18px" : "9px 18px",
+                      }}
+                    >
+                      {t}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
 
-        <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: 24 }}>
-          <BlueprintPanel height={640} caption={`${tab} - 1:100`} code="A-101" imageUrl={project.plans?.[tab]} />
-          <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
-            <BlueprintPanel height={308} caption="Coupe transversale" imageUrl={project.plans?.["Coupe transversale"]} />
-            <BlueprintPanel height={308} caption="Coupe longitudinale" accent imageUrl={project.plans?.["Coupe longitudinale"]} />
-          </div>
-        </div>
+            <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: 24 }}>
+              <BlueprintPanel height={640} caption={`${tab} - 1:100`} code="A-101" imageUrl={project.plans?.[tab]} />
+              <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+                <BlueprintPanel height={308} caption="Coupe transversale" imageUrl={project.plans?.["Coupe transversale"]} />
+                <BlueprintPanel height={308} caption="Coupe longitudinale" accent imageUrl={project.plans?.["Coupe longitudinale"]} />
+              </div>
+            </div>
+          </>
+        )}
 
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 64, borderTop: "1px solid rgba(239,233,223,.15)", paddingTop: 40 }}>
           <div>

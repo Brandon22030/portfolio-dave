@@ -90,6 +90,28 @@ export default function AdminProjects() {
     resetForm();
   };
 
+  const deletePlan = async (tabLabel) => {
+    if (!window.confirm(`Supprimer le plan « ${tabLabel} » ?`)) return;
+    const nextPlans = { ...planUrls };
+    delete nextPlans[tabLabel];
+    setPlanUrls(nextPlans);
+    setPlanFiles((prev) => {
+      const next = { ...prev };
+      delete next[tabLabel];
+      return next;
+    });
+    if (editingId) {
+      try {
+        await update(editingId, { plans: nextPlans });
+        setMessage("Plan supprimé.");
+      } catch (err) {
+        setMessage("Erreur : " + err.message);
+      } finally {
+        setTimeout(() => setMessage(""), 3000);
+      }
+    }
+  };
+
   const toggleSoft = (name) => {
     setSelSoft((prev) => (prev.includes(name) ? prev.filter((s) => s !== name) : [...prev, name]));
   };
@@ -328,33 +350,56 @@ export default function AdminProjects() {
                   const hasFile = !!planFiles[tabLabel];
                   const hasUrl = !!planUrls[tabLabel];
                   return (
-                    <label
-                      key={tabLabel}
-                      style={{
-                        border: `1px dashed ${hasFile || hasUrl ? COLORS.ink : COLORS.taupe}`,
-                        background: hasFile || hasUrl ? COLORS.adminHighlight : COLORS.adminCard,
-                        padding: 12,
-                        fontSize: 12,
-                        cursor: "pointer",
-                        display: "flex",
-                        flexDirection: "column",
-                        gap: 4,
-                      }}
-                    >
-                      <span style={{ fontWeight: 500, color: COLORS.ink }}>{tabLabel}</span>
-                      <span style={{ color: hasFile || hasUrl ? COLORS.terracotta : COLORS.text3 }}>
-                        {hasFile ? "Nouveau fichier prêt" : hasUrl ? "Déjà ajouté - cliquer pour remplacer" : "Choisir une image"}
-                      </span>
-                      <input
-                        type="file"
-                        accept="image/*"
-                        style={{ display: "none" }}
-                        onChange={(e) => {
-                          const file = e.target.files?.[0];
-                          if (file) setPlanFiles((prev) => ({ ...prev, [tabLabel]: file }));
+                    <div key={tabLabel} style={{ position: "relative" }}>
+                      <label
+                        style={{
+                          border: `1px dashed ${hasFile || hasUrl ? COLORS.ink : COLORS.taupe}`,
+                          background: hasFile || hasUrl ? COLORS.adminHighlight : COLORS.adminCard,
+                          padding: 12,
+                          fontSize: 12,
+                          cursor: "pointer",
+                          display: "flex",
+                          flexDirection: "column",
+                          gap: 4,
                         }}
-                      />
-                    </label>
+                      >
+                        <span style={{ fontWeight: 500, color: COLORS.ink }}>{tabLabel}</span>
+                        <span style={{ color: hasFile || hasUrl ? COLORS.terracotta : COLORS.text3 }}>
+                          {hasFile ? "Nouveau fichier prêt" : hasUrl ? "Déjà ajouté - cliquer pour remplacer" : "Choisir une image"}
+                        </span>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          style={{ display: "none" }}
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) setPlanFiles((prev) => ({ ...prev, [tabLabel]: file }));
+                          }}
+                        />
+                      </label>
+                      {(hasFile || hasUrl) && (
+                        <button
+                          type="button"
+                          onClick={() => deletePlan(tabLabel)}
+                          aria-label={`Supprimer le plan ${tabLabel}`}
+                          style={{
+                            position: "absolute",
+                            top: 6,
+                            right: 6,
+                            width: 20,
+                            height: 20,
+                            background: COLORS.ink,
+                            color: COLORS.sand,
+                            border: "none",
+                            cursor: "pointer",
+                            fontSize: 13,
+                            lineHeight: 1,
+                          }}
+                        >
+                          ×
+                        </button>
+                      )}
+                    </div>
                   );
                 })}
               </div>
