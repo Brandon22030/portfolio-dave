@@ -12,7 +12,7 @@ const DEFAULT_FORM = { title: "", category: CATEGORIES[0], year: "2026", locatio
 const PLAN_TABS = ["Rez-de-chaussée", "Étage supérieur", "Coupe transversale", "Coupe longitudinale"];
 
 export default function AdminProjects() {
-  const { rows: projects, add, update } = useProjects();
+  const { rows: projects, add, update, remove } = useProjects();
   const { rows: articles } = useArticles();
   const { rows: contacts } = useContacts();
   const { rows: media } = useMedia();
@@ -62,6 +62,11 @@ export default function AdminProjects() {
   };
 
   const uploadPendingImages = async (projectId) => {
+    const { count } = await supabase
+      .from("project_images")
+      .select("id", { count: "exact", head: true })
+      .eq("project_id", projectId);
+    let orderIndex = count || 0;
     const urls = [];
     for (const file of pendingFiles) {
       const ext = file.name.split(".").pop() || "jpg";
@@ -69,7 +74,14 @@ export default function AdminProjects() {
       const { error: uploadError } = await supabase.storage.from("project-images").upload(path, file, { contentType: file.type });
       if (uploadError) throw uploadError;
       const { data: publicUrl } = supabase.storage.from("project-images").getPublicUrl(path);
-      await supabase.from("project_images").insert({ project_id: projectId, storage_path: path, image_url: publicUrl.publicUrl, alt_text: form.title });
+      await supabase.from("project_images").insert({
+        project_id: projectId,
+        storage_path: path,
+        image_url: publicUrl.publicUrl,
+        alt_text: `${form.title} - vue ${orderIndex + 1}`,
+        order_index: orderIndex,
+      });
+      orderIndex += 1;
       urls.push(publicUrl.publicUrl);
     }
     return urls;
@@ -123,6 +135,18 @@ export default function AdminProjects() {
     }
   };
 
+  const deleteProject = async (p) => {
+    if (!window.confirm(`Supprimer définitivement « ${p.title} » ? Cette action est irréversible.`)) return;
+    try {
+      await remove(p.id);
+      setMessage("Projet supprimé.");
+    } catch (err) {
+      setMessage("Erreur : " + err.message);
+    } finally {
+      setTimeout(() => setMessage(""), 3000);
+    }
+  };
+
   const stats = [
     { label: "Projets publiés", value: projects.filter((p) => p.status === "Publié").length },
     { label: "Médias", value: media.length },
@@ -154,7 +178,7 @@ export default function AdminProjects() {
       </div>
 
       <Card style={{ padding: 0, overflowX: "auto" }}>
-        <div style={{ display: "grid", gridTemplateColumns: "56px 1fr 140px 120px 70px 90px 60px", fontSize: 11, textTransform: "uppercase", letterSpacing: ".1em", color: COLORS.text3, padding: "14px 20px", borderBottom: `1px solid ${COLORS.adminHairline}` }}>
+        <div style={{ display: "grid", gridTemplateColumns: "56px 1fr 140px 120px 70px 90px 130px", fontSize: 11, textTransform: "uppercase", letterSpacing: ".1em", color: COLORS.text3, padding: "14px 20px", borderBottom: `1px solid ${COLORS.adminHairline}` }}>
           <div />
           <div>Titre</div>
           <div>Catégorie</div>
@@ -164,7 +188,7 @@ export default function AdminProjects() {
           <div />
         </div>
         {projects.map((p) => (
-          <div key={p.id || p.slug} style={{ display: "grid", gridTemplateColumns: "56px 1fr 140px 120px 70px 90px 60px", alignItems: "center", padding: "12px 20px", borderBottom: `1px solid ${COLORS.adminHairline}`, fontSize: 13 }}>
+          <div key={p.id || p.slug} style={{ display: "grid", gridTemplateColumns: "56px 1fr 140px 120px 70px 90px 130px", alignItems: "center", padding: "12px 20px", borderBottom: `1px solid ${COLORS.adminHairline}`, fontSize: 13 }}>
             <img src={p.cover_image_url} alt="" style={{ width: 56, height: 40, objectFit: "cover" }} />
             <div style={{ fontWeight: 500 }}>{p.title}</div>
             <div style={{ color: COLORS.text1 }}>{p.category}</div>
@@ -173,9 +197,12 @@ export default function AdminProjects() {
             <div>
               <StatusPill status={p.status} />
             </div>
-            <div style={{ display: "flex", gap: 8 }}>
+            <div style={{ display: "flex", gap: 12 }}>
               <button onClick={() => startEdit(p)} style={{ background: "none", border: "none", color: COLORS.terracotta, cursor: "pointer", fontSize: 13, padding: 0 }}>
                 Éditer
+              </button>
+              <button onClick={() => deleteProject(p)} style={{ background: "none", border: "none", color: COLORS.text3, cursor: "pointer", fontSize: 13, padding: 0 }}>
+                Supprimer
               </button>
             </div>
           </div>
