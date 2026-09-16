@@ -7,6 +7,13 @@ import { useProjects, useArticles, useContacts, useMedia, useSoftwares } from ".
 import { slugify } from "../utils/slugify";
 import { supabase } from "../supabaseClient";
 
+function withTimeout(promise, ms = 20000) {
+  return Promise.race([
+    promise,
+    new Promise((_, reject) => setTimeout(() => reject(new Error("Délai dépassé - vérifiez votre connexion et réessayez.")), ms)),
+  ]);
+}
+
 const CATEGORIES = ["Résidentiel", "Collectif", "Patrimoine"];
 const DEFAULT_FORM = { title: "", category: CATEGORIES[0], year: "2026", location: "Cotonou, Bénin", description: "" };
 const PLAN_TABS = ["Rez-de-chaussée", "Étage supérieur", "Coupe transversale", "Coupe longitudinale"];
@@ -23,6 +30,8 @@ export default function AdminProjects() {
   const [form, setForm] = useState(DEFAULT_FORM);
   const [selSoft, setSelSoft] = useState(["Archicad", "Twinmotion", "Photoshop"]);
   const [pendingFiles, setPendingFiles] = useState([]);
+  const [existingImages, setExistingImages] = useState([]);
+  const [loadingImages, setLoadingImages] = useState(false);
   const [planUrls, setPlanUrls] = useState({});
   const [planFiles, setPlanFiles] = useState({});
   const [message, setMessage] = useState("");
@@ -33,6 +42,7 @@ export default function AdminProjects() {
     setForm(DEFAULT_FORM);
     setSelSoft(["Archicad", "Twinmotion", "Photoshop"]);
     setPendingFiles([]);
+    setExistingImages([]);
     setPlanUrls({});
     setPlanFiles({});
   };
@@ -50,6 +60,29 @@ export default function AdminProjects() {
     setPlanUrls(p.plans || {});
     setPlanFiles({});
     setEditorOpen(true);
+    setExistingImages([]);
+    setLoadingImages(true);
+    supabase
+      .from("project_images")
+      .select("*")
+      .eq("project_id", p.id)
+      .order("order_index", { ascending: true })
+      .then(({ data, error }) => {
+        setLoadingImages(false);
+        if (!error && data) setExistingImages(data);
+      });
+  };
+
+  const deleteExistingImage = async (img) => {
+    if (!window.confirm("Supprimer cette image ?")) return;
+    try {
+      if (img.storage_path) await supabase.storage.from("project-images").remove([img.storage_path]);
+      await supabase.from("project_images").delete().eq("id", img.id);
+      setExistingImages((prev) => prev.filter((i) => i.id !== img.id));
+    } catch (err) {
+      setMessage("Erreur : " + err.message);
+      setTimeout(() => setMessage(""), 3000);
+    }
   };
 
   const closeModal = () => {
@@ -62,10 +95,11 @@ export default function AdminProjects() {
   };
 
   const uploadPendingImages = async (projectId) => {
-    const { count } = await supabase
+    const { count, error: countError } = await supabase
       .from("project_images")
       .select("id", { count: "exact", head: true })
       .eq("project_id", projectId);
+    if (countError) throw countError;
     let orderIndex = count || 0;
     const urls = [];
     for (const file of pendingFiles) {
@@ -116,14 +150,14 @@ export default function AdminProjects() {
         softwares: selSoft,
         sheet: { Localisation: form.location },
       };
-      const saved = editingId ? await update(editingId, record) : await add({ ...record, cover_image_url: "/img/hero-accueil.jpg", color: "#1A1A1A" });
+      const saved = await withTimeout(editingId ? update(editingId, record) : add({ ...record, cover_image_url: "/img/hero-accueil.jpg", color: "#1A1A1A" }));
       if (pendingFiles.length) {
-        const urls = await uploadPendingImages(saved.id);
-        if (!editingId && urls[0]) await update(saved.id, { cover_image_url: urls[0] });
+        const urls = await withTimeout(uploadPendingImages(saved.id), 60000);
+        if (!editingId && urls[0]) await withTimeout(update(saved.id, { cover_image_url: urls[0] }));
       }
       if (Object.keys(planFiles).length) {
-        const mergedPlans = await uploadPendingPlans(saved.id);
-        await update(saved.id, { plans: mergedPlans });
+        const mergedPlans = await withTimeout(uploadPendingPlans(saved.id), 60000);
+        await withTimeout(update(saved.id, { plans: mergedPlans }));
       }
       setMessage(editingId ? "Projet mis à jour." : "Projet créé.");
       closeModal();
@@ -131,7 +165,7 @@ export default function AdminProjects() {
       setMessage("Erreur : " + err.message);
     } finally {
       setSaving(false);
-      setTimeout(() => setMessage(""), 3000);
+      setTimeout(() => setMessage(""), 4000);
     }
   };
 
@@ -234,6 +268,43 @@ export default function AdminProjects() {
               <textarea style={{ ...inputStyle, resize: "vertical" }} rows={3} value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
             </Field>
             <Field label="Médias">
+              {editingId && (
+                <>
+                  {loadingImages && <div style={{ fontSize: 12, color: COLORS.text3, marginBottom: 8 }}>Chargement des images…</div>}
+                  {!loadingImages && existingImages.length > 0 && (
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 8, marginBottom: 10 }}>
+                      {existingImages.map((img) => (
+                        <div key={img.id} style={{ position: "relative" }}>
+                          <img src={img.image_url} alt="" style={{ width: "100%", aspectRatio: "4/3", objectFit: "cover", display: "block" }} />
+                          <button
+                            type="button"
+                            onClick={() => deleteExistingImage(img)}
+                            aria-label="Supprimer cette image"
+                            style={{
+                              position: "absolute",
+                              top: 4,
+                              right: 4,
+                              width: 22,
+                              height: 22,
+                              background: "rgba(20,18,15,.75)",
+                              color: COLORS.sand,
+                              border: "none",
+                              cursor: "pointer",
+                              fontSize: 14,
+                              lineHeight: 1,
+                            }}
+                          >
+                            ×
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  {!loadingImages && existingImages.length === 0 && (
+                    <div style={{ fontSize: 12, color: COLORS.text3, marginBottom: 10 }}>Aucune image ajoutée pour l'instant.</div>
+                  )}
+                </>
+              )}
               <label
                 style={{
                   border: `1px dashed ${COLORS.terracotta}`,
